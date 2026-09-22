@@ -1,2 +1,3 @@
-# balance-backend
-backend api and relational database
+# Balance Backend (ECE 49595 – Exercise 3)
+
+FastAPI 

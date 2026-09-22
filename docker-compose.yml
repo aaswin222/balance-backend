@@ -1,0 +1,29 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: balance
+      POSTGRES_PASSWORD: balance
+      POSTGRES_DB: balance
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # named volume = data survives restarts
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U balance -d balance"]
+      interval: 2s
+      timeout: 3s
+      retries: 15
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgresql+psycopg2://balance:balance@db:5432/balance
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy   # don't start API until Postgres accepts connections
+
+volumes:
+  pgdata:
