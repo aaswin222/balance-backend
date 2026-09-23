@@ -3,7 +3,7 @@
 ECE 49595 Senior Design I, Exercise 3 (Learn a Skill), Team 9
 Aishwarya Aswin
 
-Demo video: [add link here]
+Demo video: https://drive.google.com/file/d/1FS2Sl2UYaGBzB9XbFDanGS3V8-E8i8E3/view
 
 This is a small backend for Balance, our budgeting app. It stores users, savings goals, and transactions, and can give a spending summary by category. It's built with FastAPI and PostgreSQL, and both run in Docker containers.
 
