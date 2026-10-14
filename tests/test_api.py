@@ -48,7 +48,7 @@ def test_summary_date_range(client, user):
 
 # ---------- error handling ----------
 def test_duplicate_email_rejected(client, user):
-    r = client.post("/users", json={"name": "Copy", "email": "aish@example.com"})
+    r = client.post("/users", json={"name": "Copy", "email": "aish@example.com", "password": "another-password"})
     assert r.status_code == 409
 
 
@@ -67,9 +67,11 @@ def test_saved_over_target_rejected(client, user):
     assert r.status_code == 422
 
 
-def test_unknown_user_404(client):
-    assert client.post("/users/999/transactions", json={"amount": 5, "category": "food"}).status_code == 404
-    assert client.get("/users/999/spending-summary").status_code == 404
+def test_other_user_id_forbidden(client, user):
+    # Was a 404 before login existed. Now any id that isn't yours is 403, whether or not it
+    # exists (so ids can't be probed). Cross-user cases are covered in test_privacy.py.
+    assert client.post("/users/999/transactions", json={"amount": 5, "category": "food"}).status_code == 403
+    assert client.get("/users/999/spending-summary").status_code == 403
 
 
 def test_bad_date_range_rejected(client, user):

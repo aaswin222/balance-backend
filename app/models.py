@@ -25,6 +25,8 @@ class User(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100))
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    # Argon2 hash of the password (never the password itself). Added in Exercise 5.
+    password_hash: Mapped[str] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     # cascade: deleting a user deletes their goals/transactions (no orphans)

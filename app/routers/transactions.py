@@ -6,7 +6,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from ..database import get_db
-from ..deps import get_user_or_404
+from ..deps import get_owned_user
 from ..models import Category, Transaction, User
 from ..schemas import CategoryTotal, SpendingSummary, TransactionCreate, TransactionOut
 
@@ -14,7 +14,7 @@ router = APIRouter(prefix="/users/{user_id}", tags=["transactions"])
 
 
 @router.post("/transactions", response_model=TransactionOut, status_code=status.HTTP_201_CREATED)
-def create_transaction(body: TransactionCreate, user: User = Depends(get_user_or_404), db: Session = Depends(get_db)):
+def create_transaction(body: TransactionCreate, user: User = Depends(get_owned_user), db: Session = Depends(get_db)):
     data = body.model_dump(exclude_none=True)  # let DB default fill occurred_on if omitted
     txn = Transaction(user_id=user.id, **data)
     db.add(txn)
@@ -25,7 +25,7 @@ def create_transaction(body: TransactionCreate, user: User = Depends(get_user_or
 
 @router.get("/transactions", response_model=list[TransactionOut])
 def list_transactions(
-    user: User = Depends(get_user_or_404),
+    user: User = Depends(get_owned_user),
     db: Session = Depends(get_db),
     category: Category | None = None,
     limit: int = Query(50, ge=1, le=200),
@@ -40,7 +40,7 @@ def list_transactions(
 
 @router.get("/spending-summary", response_model=SpendingSummary)
 def spending_summary(
-    user: User = Depends(get_user_or_404),
+    user: User = Depends(get_owned_user),
     db: Session = Depends(get_db),
     start: date | None = None,
     end: date | None = None,
